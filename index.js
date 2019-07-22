@@ -14,9 +14,12 @@ http.createServer(app).listen(3000, ()=>{
 });
 
 app.post('/endpoint',(req, res) => {
-    recepID = req.body['originalDetectIntentRequest']['payload']['data']['sender']['id'] 
-    let text = req.body['queryResult']['queryText']
-    let action = req.body['queryResult']['action']
+    recepID = req.body['originalDetectIntentRequest']['payload']['data']['sender']['id'];
+    let text = req.body['queryResult']['queryText'];
+    let action = req.body['queryResult']['action'];
     let parameters = req.body['queryResult']['parameters'];
-    console.log(action)
+    console.log(action, parameters);
+    if(action == 'busTo'){
+        fb.sendMessage(recepID, "Looking for the bus");
+    }
 });
