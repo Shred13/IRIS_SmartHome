@@ -17,11 +17,16 @@ http.createServer(app).listen(3000, ()=>{
 function mapSearch (){
     request.get('https://maps.googleapis.com/maps/api/directions/json?origin=44.225916,-76.514490&destination=44.227959,-76.495649&transit_mode=bus&mode=transit&key='+googleMaps, function (error, response, body) {
         console.error('error:', error); // Print the error if one occurred
-        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-        console.log('body:', JSON.parse(body)); // Print the HTML for the Google homepage.
+        // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+        // console.log('body:', JSON.parse(body)['routes']); // Print the HTML for the Google homepage.
+        let JSONified = JSON.parse(body);
+        let routes = JSONified['routes'][0]['legs'][0];
+        // console.log(routes[0]['legs'][0])
+
+        // for (let i =0; i<)
     });
 }
-mapSearch()
+mapSearch();
 app.post('/endpoint',(req, res) => {
     recepID = req.body['originalDetectIntentRequest']['payload']['data']['sender']['id'];
     let text = req.body['queryResult']['queryText'];
@@ -30,6 +35,5 @@ app.post('/endpoint',(req, res) => {
     console.log(action, parameters);
     if(action == 'busTo'){
         fb.sendMessage(recepID, "Looking for the bus");
-
     }
 });
