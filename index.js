@@ -14,12 +14,14 @@ http.createServer(app).listen(3000, ()=>{
     console.log('Listening on port 3000')
 });
 
-request('https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood&key='+googleMaps, function (error, response, body) {
-    console.error('error:', error); // Print the error if one occurred
-    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-    console.log('body:', body); // Print the HTML for the Google homepage.
-});
-
+function mapSearch (){
+    request.get('https://maps.googleapis.com/maps/api/directions/json?origin=44.225916,-76.514490&destination=44.227959,-76.495649&transit_mode=bus&mode=transit&key='+googleMaps, function (error, response, body) {
+        console.error('error:', error); // Print the error if one occurred
+        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+        console.log('body:', JSON.parse(body)); // Print the HTML for the Google homepage.
+    });
+}
+mapSearch()
 app.post('/endpoint',(req, res) => {
     recepID = req.body['originalDetectIntentRequest']['payload']['data']['sender']['id'];
     let text = req.body['queryResult']['queryText'];
