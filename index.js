@@ -16,11 +16,48 @@ http.createServer(app).listen(3000, ()=>{
 
 let recepID ="";
 
-function mapSearch (){
-    request.get('https://maps.googleapis.com/maps/api/directions/json?origin=44.225916,-76.514490&destination=44.227959,-76.495649&transit_mode=bus&mode=transit&key='+googleMaps, function (error, response, body) {
+function mapSearch(parameters){
+    let dest = "";
+    if (parameters['Common_Kingston']===''){
+        dest = "44.227959,-76.495649";
+    }
+    else if(parameters['Common_Kingston']==='Botterall'){
+        dest = "44.224407,-76.491671"
+    }
+    else if(parameters['Common_Kingston']==='Brant Hall'){
+        dest = "44.223591,-76.499949"
+    }
+    else if(parameters['Common_Kingston']==='Goodwin Hall'){
+        dest = "44.228043,-76.492341"
+    }
+    else if(parameters['Common_Kingston']==='Home'){
+        dest = "44.225909,-76.514474"
+    }
+    else if(parameters['Common_Kingston']==='Isabel Bader'){
+        dest = "44.220726,-76.506287";
+    }
+    else if(parameters['Common_Kingston']==='Main'){
+        dest = "44.228032,-76.495519";
+    }
+    else if(parameters['Common_Kingston']==='Stirling'){
+        dest = "44.224615,-76.497733"
+    }
+    else if(parameters['Common_Kingston']==='Victoria Hall'){
+        dest = "44.225386,-76.498491"
+    }
+    else if(parameters['Common_Kingston']==='West Campus'){
+        dest = "44.223289, -76.514123"
+    }
+    mapSearchHelper(dest)
+}
+
+function mapSearchHelper (dest, loc){
+    request.get('https://maps.googleapis.com/maps/api/directions/json?origin=44.225916,-76.514490&destination=' + dest + '&transit_mode=bus&mode=transit&key='+googleMaps, function (error, response, body) {
         console.error('error:', error); // Print the error if one occurred
         // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         // console.log('body:', JSON.parse(body)['routes']); // Print the HTML for the Google homepage.
+
+
         let JSONified = JSON.parse(body);
         let routes = JSONified['routes'][0]['legs'][0]['steps'];
         let arrOfRoutes=[];
@@ -29,12 +66,11 @@ function mapSearch (){
                 arrOfRoutes.push(routes[i]);
             }
         }
-        console.log(arrOfRoutes[0]['transit_details']['line']['short_name']);
+        // console.log(arrOfRoutes[0]['transit_details']);
 
         // let arrOfFinalRoutes = [];
         for (let o = 0; o < arrOfRoutes.length; o++) {
-            // arrOfFinalRoutes.push([arrOfRoutes[o]['transit_details']["departure_time"]['text'], arrOfRoutes[o]['transit_details']['line']['short_name']]);
-            fb.sendMessage(recepID, ("Bus # " + arrOfRoutes[o]['transit_details']['line']['short_name']+ " is leaving from " + arrOfRoutes[o]['transit_details']['departure_stop']['name'] + " at " + arrOfRoutes[o]['transit_details']["departure_time"]['text']))
+            fb.sendMessage(recepID, ("Bus # " + arrOfRoutes[o]['transit_details']['line']['short_name']+ " is leaving from " + arrOfRoutes[o]['transit_details']['departure_stop']['name'] + " at " + arrOfRoutes[o]['transit_details']["departure_time"]['text']+ ". You will reach " + arrOfRoutes[o]['transit_details']["arrival_stop"]['name'] + " at " + arrOfRoutes[o]['transit_details']["arrival_time"]['text']))
         }
 
 
@@ -54,6 +90,6 @@ app.post('/endpoint',(req, res) => {
     console.log(action, parameters);
     if(action === 'busTo'){
         fb.sendMessage(recepID, "Looking for the bus");
-        mapSearch();
+        mapSearch(parameters);
     }
 });
