@@ -19,7 +19,15 @@ let recepID ="";
 function mapSearch(parameters){
     let dest = "";
     if (parameters['Common_Kingston']===''){
-        dest = "44.227959,-76.495649";
+        if (parameters['location']!==''){
+            let toFormat = parameters['location']['street-address'];
+            let destAlmost = toFormat.replace(new RegExp(" ", "g"), "+");
+            dest = destAlmost+"+Kingston+ON"
+        }
+        else{
+            fb.sendMessage(recepID, "Sorry, could not find a bus to that place");
+            return;
+        }
     }
     else if(parameters['Common_Kingston']==='Botterall'){
         dest = "44.224407,-76.491671"
@@ -69,8 +77,13 @@ function mapSearchHelper (dest, loc){
         // console.log(arrOfRoutes[0]['transit_details']);
 
         // let arrOfFinalRoutes = [];
-        for (let o = 0; o < arrOfRoutes.length; o++) {
-            fb.sendMessage(recepID, ("Bus # " + arrOfRoutes[o]['transit_details']['line']['short_name']+ " is leaving from " + arrOfRoutes[o]['transit_details']['departure_stop']['name'] + " at " + arrOfRoutes[o]['transit_details']["departure_time"]['text']+ ". You will reach " + arrOfRoutes[o]['transit_details']["arrival_stop"]['name'] + " at " + arrOfRoutes[o]['transit_details']["arrival_time"]['text']))
+        if (arrOfRoutes.length>0) {
+            for (let o = 0; o < arrOfRoutes.length; o++) {
+                fb.sendMessage(recepID, ("Bus # " + arrOfRoutes[o]['transit_details']['line']['short_name'] + " is leaving from " + arrOfRoutes[o]['transit_details']['departure_stop']['name'] + " at " + arrOfRoutes[o]['transit_details']["departure_time"]['text'] + ". You will reach " + arrOfRoutes[o]['transit_details']["arrival_stop"]['name'] + " at " + arrOfRoutes[o]['transit_details']["arrival_time"]['text'] + "(Total of " + arrOfRoutes[o]['transit_details']["num_stops"] + " stops)."))
+            }
+        }
+        else{
+            fb.sendMessage(recepID, "No bus there sorry, (might not exist!)")
         }
 
 
@@ -89,7 +102,6 @@ app.post('/endpoint',(req, res) => {
     let parameters = req.body['queryResult']['parameters'];
     console.log(action, parameters);
     if(action === 'busTo'){
-        fb.sendMessage(recepID, "Looking for the bus");
         mapSearch(parameters);
     }
 });
