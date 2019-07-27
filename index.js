@@ -5,6 +5,7 @@ const app = express();
 const {googleMaps} = require('./config');
 const request = require('request');
 const fb = require('./fb');
+const spotify = require('./spotify');
 // const { endpoint, masterKey, port } = require(‘./config’);
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -94,6 +95,7 @@ function mapSearchHelper (dest, loc){
         // for (let i =0; i<)
     });
 }
+
 
 app.post('/endpoint',(req, res) => {
     recepID = req.body['originalDetectIntentRequest']['payload']['data']['sender']['id'];
