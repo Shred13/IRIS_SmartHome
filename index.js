@@ -105,3 +105,5 @@ app.post('/endpoint',(req, res) => {
         mapSearch(parameters);
     }
 });
+
+//todo look into adding to the bus so that the user location can change and it will still work. Maybe can extract from messenger some how? Do it after spotify tho
